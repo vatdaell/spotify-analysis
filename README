@@ -1,0 +1,9 @@
+## Problem Statement 
+Analyze patterns in recent spotify music to see what similar music can be found, analysis of text, etc
+
+## Path
+1) Get recently played data in json format and store it in a s3 bucket 
+2) Get lyrics of each song and store it in s3 bucket
+3) download the data of each song and merge it
+4) Add to sql database
+5) Use to summarize the data for the user  
