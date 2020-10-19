@@ -24,6 +24,7 @@ def saveJson(s3Object, body):
 def spotifyAuthenticate(scope):
     return spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
+FOLDER = "raw_json"
 
 if __name__ == "__main__":
     # Load env vars
@@ -45,7 +46,7 @@ if __name__ == "__main__":
 
     # Save raw data to s3 store
     try:
-        filename = "recent_plays_{}.json".format(yesterday_timestamp)
+        filename = "{}/recent_plays_{}.json".format(FOLDER, yesterday_timestamp)
         s3object = S3.Object(getenv("S3_BUCKET"), filename)
         body = bytes(json.dumps(results).encode("UTF-8"))
         saveJson(s3object, body)
