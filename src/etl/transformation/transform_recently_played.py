@@ -24,7 +24,7 @@ def validateData(dataframe, primary_key):
 
 def uploadData(bucket, buffer):
     bucket.put(
-            Body=buffer.read().format("utf-8")
+            Body=buffer.getvalue()
         )
 
 
@@ -46,7 +46,7 @@ COLS = ["artist", "album", "track", "duration",
 
 FOLDER = "weekly_reports"
 
-PREFIX = "raw_json/recently_played"
+PREFIX = "raw_json/recent_plays"
 
 if __name__ == "__main__":
     # Load env vars
@@ -65,11 +65,10 @@ if __name__ == "__main__":
 
     result_pd = pd.DataFrame(result, columns=COLS)
     if validateData(result_pd, "played_at"):
-
         # load to buffer
         csv_buffer = StringIO()
         result_pd.to_csv(csv_buffer)
         filename = "{}/{}.csv".format(FOLDER, datetime.now())
         s3object = S3.Object(getenv("S3_BUCKET"), filename)
-
+        
         uploadData(s3object, csv_buffer)
