@@ -3,9 +3,10 @@ from dotenv import load_dotenv, find_dotenv
 from os import getenv
 import pandas as pd
 from io import StringIO
+from sqlalchemy import create_engine
+import pymysql
 
 PREFIX = "weekly_reports"
-
 
 def getFiles(bucket, prefix=PREFIX):
     files = list(bucket.objects.all().filter(Prefix=prefix))
@@ -48,4 +49,25 @@ if __name__ == "__main__":
         latest_file_name = latest_file_name[0]
 
     csv = loadCSVfile(S3, getenv("S3_BUCKET"), latest_file_name)
-    
+    csv = csv[['artist', 'album', 'track', 'duration', 'popularity',
+       'played_at', 'explicit']]
+
+    # Loading to db
+    sqlEngine = create_engine(getenv("MYSQL_URL"), pool_recycle=3600)
+    dbConnection = sqlEngine.connect()
+    TABLE = getenv("TABLE_NAME")
+
+    try:
+        frame = csv.to_sql(TABLE, dbConnection, if_exists='replace')
+
+    except ValueError as vx:
+        print(vx)
+
+    except Exception as ex:
+        print(ex)
+
+    else:
+        print("Table Created")
+
+    finally:
+        dbConnection.close()
