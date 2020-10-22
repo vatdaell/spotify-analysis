@@ -15,7 +15,7 @@ def getFiles(bucket, prefix="recent_plays_"):
 def loadJsonFile(resource, bucket, filename):
     content_object = resource.Object(bucket, filename)
     file_content = content_object.get()['Body'].read().decode('utf-8')
-    return json.loads(file_content)    
+    return json.loads(file_content)
 
 
 def validateData(dataframe, primary_key):
@@ -70,5 +70,5 @@ if __name__ == "__main__":
         result_pd.to_csv(csv_buffer)
         filename = "{}/{}.csv".format(FOLDER, datetime.now())
         s3object = S3.Object(getenv("S3_BUCKET"), filename)
-        
+
         uploadData(s3object, csv_buffer)

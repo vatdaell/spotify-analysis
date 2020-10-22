@@ -24,7 +24,9 @@ def saveJson(s3Object, body):
 def spotifyAuthenticate(scope):
     return spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
+
 FOLDER = "raw_json"
+
 
 if __name__ == "__main__":
     # Load env vars
