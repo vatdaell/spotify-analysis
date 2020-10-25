@@ -48,3 +48,31 @@ class Store(object):
     def _generateFilename(self, name, folder, prefix="recent_plays_", fileType="json"):
         filename = "{}/{}{}.{}".format(folder, prefix, name, fileType)
         return filename
+
+    def getFiles(self, prefix=""):
+        """
+        The method to return all files
+
+        Parameters:
+            prefix (str): filter by prefix
+
+        Returns:
+            list(S3 FileObject)
+        """
+        bucket = self.store.Bucket((self.name))
+        return list(bucket.objects.all().filter(Prefix=prefix))
+
+    def getFile(self, path, encoding="UTF-8"):
+        """
+        The method to return file by name
+
+        Parameters:
+            path (str): filter by prefix
+            encoding (str): encoding format, defaults to UTF-8
+
+        Returns:
+            S3 FileObject
+        """
+        content_object = self.store.Object(self.name, path)
+        file_content = content_object.get()['Body'].read().decode(encoding)
+        return file_content
