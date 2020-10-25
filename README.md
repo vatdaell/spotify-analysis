@@ -34,9 +34,9 @@ TABLE_NAME=recent_plays_table_name
 
 To load the recently played data on s3 bucket and to the MySQL database
 ```bash
-python src/etl/extraction/recently_played.py
-python src/etl/transformation/transform_recently_played.py
-python src/etl/loading/load_songs.py
+python src/etl/recently_played_extract.py
+python src/etl/recently_played_transform.py
+python src/etl/songs_loader.py
 ```
 
 ## Roadmap
