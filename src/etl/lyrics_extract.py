@@ -2,15 +2,47 @@ from os import getenv
 from dotenv import load_dotenv, find_dotenv
 from common.apiauth import genius_authenticate
 from common.store import Store
+from common.timehelpers import extractDate
+from time import sleep
+from datetime import datetime
+from io import StringIO
+import pandas as pd
+
+PREFIX = "weekly_reports"
+FOLDER = "lyrics"
+
+def get_artist_song(row):
+    # sleep because data is being scraped
+    sleep(10)
+    artist = row["artist"]
+    track = row["track"]
+    song = genius.search_song(track, artist)
+    return song.lyrics
 
 
 if __name__ == "__main__":
     # Load env vars
     load_dotenv(find_dotenv())
 
+    store = Store(getenv("S3_BUCKET"))
     genius = genius_authenticate(getenv("GENIUS_ACCESS_TOKEN"))
-    song = genius.search_song("daw", "aijrwoa")
-    if song is None:
-        print("Song not found")
-    else:
-        print("Song found")
+
+    files = store.getFiles(PREFIX)
+    file_names = list(filter(lambda x: ".csv" in x, map(lambda x: x.key, files)))
+
+    latest_date = max(list(map(lambda x: extractDate(x, PREFIX, ".csv"), file_names)))
+    latest_file = "{}/{}.{}".format(PREFIX, latest_date, "csv")
+
+    # Get File
+    body = store.getFile(latest_file)
+    csv = pd.read_csv(StringIO(body), low_memory=False)
+    csv = csv[["artist", "track"]].drop_duplicates()
+
+    # Grab lyrics from genius
+    csv["lyrics"] = csv.apply(lambda row: get_artist_song(row), axis=1)
+
+    csv_buffer = StringIO()
+    csv.to_csv(csv_buffer)
+    body = csv_buffer.getvalue()
+
+    store.saveFile(datetime.now(), FOLDER, body, "", "csv")
