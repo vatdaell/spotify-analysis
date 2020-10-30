@@ -34,9 +34,13 @@ S3_BUCKET=bucket_name
 SPOTIPY_CLIENT_ID=clientid
 SPOTIPY_CLIENT_SECRET=secret
 SPOTIPY_REDIRECT_URI=redirect_uri
-MYSQL_URL=mysql+pymysql://mysqlurl
 TABLE_NAME=recent_plays_table_name
 GENIUS_ACCESS_TOKEN=genius_access_token
+MYSQL_HOST=mysql_host
+MYSQL_PORT=port
+MYSQL_USER=user
+MYSQL_PASS=password
+MYSQL_DB=dbname
 ```
 
 ## Usage
