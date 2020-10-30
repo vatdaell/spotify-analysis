@@ -8,8 +8,7 @@ from common.store import Store
 
 
 def validateData(dataframe, primary_key):
-    return len(dataframe[primary_key].unique()) == len(dataframe)
-
+    return pd.Series(dataframe[primary_key]).is_unique
 
 def transformTrack(file_content):
     artists = list(map(lambda x: x["track"]["artists"][0]["name"], file_content))
@@ -42,7 +41,7 @@ if __name__ == "__main__":
         data_list = transformTrack(file_content["items"])
         result = result + data_list
 
-    result_pd = pd.DataFrame(result, columns=COLS)
+    result_pd = pd.DataFrame(result, columns=COLS).drop_duplicates()
 
     if validateData(result_pd, "played_at"):
         # load to buffer
