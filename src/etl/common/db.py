@@ -17,18 +17,31 @@ class DB(object):
 
     def insertRecentPlays(self, songdata):
         self.deleteRecentPlays()
-        sql = "INSERT INTO recently_played(artist, album, track, duration, popularity, played_at, explicit)VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        cursor = self.db.cursor()
-        cursor.executemany(sql, songdata)
-        self.db.commit()
-        print(cursor.rowcount, "rows were inserted")
+        sql = """INSERT INTO recently_played
+        (artist, album, track, duration, popularity, played_at, explicit)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        try:
+            cursor = self.db.cursor()
+            cursor.executemany(sql, songdata)
+            self.db.commit()
+            print(cursor.rowcount, "rows were inserted")
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            # reverting changes because of exception
+            self.db.rollback()
 
     def deleteRecentPlays(self):
         sql = "DELETE FROM recently_played"
         cursor = self.db.cursor()
-        cursor.execute(sql)
-        self._resetAutoIncrement()
-        self.db.commit()
+        try:
+            cursor.execute(sql)
+            self._resetAutoIncrement()
+            self.db.commit()
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            # reverting changes because of exception
+            self.db.rollback()
 
     def getRecentPlays(self):
         sql = "SELECT * FROM recently_played"
@@ -51,8 +64,15 @@ class DB(object):
                     PRIMARY KEY(id)
                 )
             """
-        cursor = self.db.cursor()
-        cursor.execute(sql)
+        try:
+            cursor = self.db.cursor()
+            cursor.execute(sql)
+            self.db.commit()
+
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            # reverting changes because of exception
+            self.db.rollback()
 
     def _resetAutoIncrement(self):
         sql = "ALTER TABLE recently_played AUTO_INCREMENT = 1"
