@@ -20,7 +20,7 @@ class DB(object):
         sql = "INSERT INTO recently_played(artist, album, track, duration, popularity, played_at, explicit)VALUES (%s, %s, %s, %s, %s, %s, %s)"
         cursor = self.db.cursor()
         cursor.executemany(sql, songdata)
-
+        self.db.commit()
         print(cursor.rowcount, "rows were inserted")
 
     def deleteRecentPlays(self):
@@ -28,6 +28,7 @@ class DB(object):
         cursor = self.db.cursor()
         cursor.execute(sql)
         self._resetAutoIncrement()
+        self.db.commit()
 
     def getRecentPlays(self):
         sql = "SELECT * FROM recently_played"
@@ -57,3 +58,4 @@ class DB(object):
         sql = "ALTER TABLE recently_played AUTO_INCREMENT = 1"
         cursor = self.db.cursor()
         cursor.execute(sql)
+        self.db.commit()
