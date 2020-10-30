@@ -49,7 +49,7 @@ To load the recently played data on s3 bucket and to the MySQL database
 ```bash
 python src/etl/recently_played_extract.py
 python src/etl/recently_played_transform.py
-python src/etl/songs_loader.py
+python src/etl/recently_played_load.py
 ```
 
 To extract the lyrics and store it in an s3 bucket
