@@ -7,9 +7,11 @@ from time import sleep
 from datetime import datetime
 from io import StringIO
 import pandas as pd
+import re
 
 PREFIX = "weekly_reports"
-FOLDER = "lyrics"
+FOLDER = "lyrics/raw_data"
+
 
 def get_artist_song(row):
     # sleep because data is being scraped
@@ -17,7 +19,14 @@ def get_artist_song(row):
     artist = row["artist"]
     track = row["track"]
     song = genius.search_song(track, artist)
-    return song.lyrics
+    result = clean_lyrics(song.lyrics)
+    return result
+
+
+def clean_lyrics(lyrics):
+    result = re.sub(r"\[.*\]", "", lyrics)
+    result = result.replace("\n", " ").replace("  ", " ")
+    return result
 
 
 if __name__ == "__main__":
@@ -36,7 +45,7 @@ if __name__ == "__main__":
     # Get File
     body = store.getFile(latest_file)
     csv = pd.read_csv(StringIO(body), low_memory=False)
-    csv = csv[["artist", "track"]].drop_duplicates()
+    csv = csv[["artist", "track", "track_id"]].drop_duplicates()
 
     # Grab lyrics from genius
     csv["lyrics"] = csv.apply(lambda row: get_artist_song(row), axis=1)

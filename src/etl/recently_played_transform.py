@@ -10,6 +10,7 @@ from common.store import Store
 def validateData(dataframe, primary_key):
     return pd.Series(dataframe[primary_key]).is_unique
 
+
 def transformTrack(file_content):
     artists = list(map(lambda x: x["track"]["artists"][0]["name"], file_content))
     albums = list(map(lambda x: x["track"]["album"]["name"], file_content))
@@ -18,12 +19,12 @@ def transformTrack(file_content):
     popularity = list(map(lambda x: x["track"]["popularity"], file_content))
     played_at = list(map(lambda x: x["played_at"], file_content))
     explicit = list(map(lambda x: x["track"]["explicit"], file_content))
-
-    return list(zip(artists, albums, tracks, duration, popularity, played_at, explicit))
+    track_id = list(map(lambda x: x["track"]["id"], file_content))
+    return list(zip(artists, albums, tracks, duration, popularity, played_at, explicit, track_id))
 
 
 COLS = ["artist", "album", "track", "duration",
-        "popularity", "played_at", "explicit"]
+        "popularity", "played_at", "explicit", "track_id"]
 FOLDER = "weekly_reports"
 PREFIX = "raw_json/recent_plays"
 
