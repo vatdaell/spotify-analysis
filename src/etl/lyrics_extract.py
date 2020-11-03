@@ -15,7 +15,7 @@ FOLDER = "lyrics/raw_data"
 
 def get_artist_song(row):
     # sleep because data is being scraped
-    sleep(10)
+    sleep(5)
     artist = row["artist"]
     track = row["track"]
     song = genius.search_song(track, artist)

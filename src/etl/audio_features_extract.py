@@ -51,10 +51,16 @@ if __name__ == "__main__":
         'danceability', 'energy', 'key',
         'loudness', 'mode', 'speechiness', 'acousticness',
         'instrumentalness', 'liveness', 'valence', 'tempo',
-        'duration_ms'
+        'duration_ms', 'id'
     ]
 
-    merged_pd = pd.concat([csv, features_pd[features_cols]], axis=1, join="inner")
+    features_csv = features_pd[features_cols]
+    features_csv = features_csv.rename(columns={"id": "track_id"})
+
+    merged_pd = csv.join(
+        features_csv.set_index("track_id"),
+        on="track_id"
+    )
 
     if validateData(merged_pd, "track_id"):
         # load to buffer
