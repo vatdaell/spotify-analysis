@@ -67,8 +67,8 @@ if __name__ == "__main__":
         on="track_id"
     )
 
-    print(joined_data.drop_duplicates().dropna())
-    
+    joined_data = joined_data.drop_duplicates(subset=["track_id"])
+
     if(validateData(joined_data, "track_id")):
         # load to buffer
         csv_buffer = StringIO()
