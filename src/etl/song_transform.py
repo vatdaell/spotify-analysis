@@ -9,6 +9,7 @@ import pandas as pd
 
 FEATURE_PREFIX = "audio_features"
 LYRICS_PREFIX = "lyrics"
+RECENTLY_PREFIX = "weekly_reports"
 FOLDER = "songs"
 
 
@@ -60,13 +61,28 @@ if __name__ == "__main__":
 
     csv_features = pd.concat(songs_data)
     csv_features = csv_features.loc[:, csv_features.columns != "Unnamed: 0"]
+
     csv_lyrics = getLatestCSVFile(store, LYRICS_PREFIX)[["track_id", "lyrics"]]
+    csv_lyrics = csv_lyrics.drop_duplicates(subset=["track_id"])
+
+    csv_recently = getLatestCSVFile(store, RECENTLY_PREFIX)[
+        [
+            "track_id",
+            "popularity",
+            "explicit"
+        ]
+    ]
+    csv_recently = csv_recently.drop_duplicates(subset=["track_id"])
 
     joined_data = csv_features.join(
         csv_lyrics.set_index("track_id"),
         on="track_id"
     )
 
+    joined_data = joined_data.join(
+        csv_recently.set_index("track_id"),
+        on="track_id"
+    )
     joined_data = joined_data.drop_duplicates(subset=["track_id"])
 
     if(validateData(joined_data, "track_id")):
