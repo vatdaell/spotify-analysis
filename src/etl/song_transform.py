@@ -72,7 +72,7 @@ if __name__ == "__main__":
     if(validateData(joined_data, "track_id")):
         # load to buffer
         csv_buffer = StringIO()
-        joined_data.to_csv(csv_buffer)
+        joined_data.to_csv(csv_buffer, index=False)
         body = csv_buffer.getvalue()
 
         # save file
