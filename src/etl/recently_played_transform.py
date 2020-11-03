@@ -26,7 +26,7 @@ def transformTrack(file_content):
 COLS = ["artist", "album", "track", "duration",
         "popularity", "played_at", "explicit", "track_id"]
 FOLDER = "weekly_reports"
-PREFIX = "raw_json/recent_plays"
+PREFIX = "raw_json/recently_played/recent_plays"
 
 if __name__ == "__main__":
     # Load env vars

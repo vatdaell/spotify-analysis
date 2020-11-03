@@ -10,6 +10,9 @@ import pandas as pd
 PREFIX = "weekly_reports"
 FOLDER = "audio_features"
 
+RAW_PREFIX = "raw_json/features"
+RAW_EXTENSION = "json"
+
 
 def validateData(dataframe, primary_key):
     return pd.Series(dataframe[primary_key]).is_unique
@@ -36,6 +39,12 @@ if __name__ == "__main__":
     sp = spotify_authenticate(scope)
 
     features = sp.audio_features(list_of_ids)
+
+    # Store json as raw format in s3
+    body = store.encodeJson(features)
+    store.saveFile(datetime.now(), RAW_PREFIX, body, "", RAW_EXTENSION)
+
+    # Make panda dataframe of various features
     features_pd = pd.DataFrame(features)
 
     features_cols = [
