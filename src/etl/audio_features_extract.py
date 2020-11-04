@@ -6,6 +6,7 @@ from os import getenv
 from io import StringIO
 from datetime import datetime
 import pandas as pd
+import numpy as np
 
 PREFIX = "weekly_reports"
 FOLDER = "audio_features"
@@ -17,6 +18,12 @@ RAW_EXTENSION = "json"
 def validateData(dataframe, primary_key):
     return pd.Series(dataframe[primary_key]).is_unique
 
+
+def chunks(l, n):
+    # For item i in a range that is a length of l,
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield l[i:i+n]
 
 if __name__ == "__main__":
     load_dotenv(find_dotenv())
@@ -38,7 +45,14 @@ if __name__ == "__main__":
     scope = "user-read-recently-played"
     sp = spotify_authenticate(scope)
 
-    features = sp.audio_features(list_of_ids)
+    # Make a payload of 100 since api has max 100
+    id_chunks = list(chunks(list_of_ids, 100))
+
+    # Get the features
+    features = []
+    for chunk in id_chunks:
+        resp = sp.audio_features(chunk)
+        features = features + resp
 
     # Store json as raw format in s3
     body = store.encodeJson(features)
