@@ -39,7 +39,11 @@ class DB(object):
             self._resetAutoIncrement("recently_played")
             self.db.commit()
         except mysql.connector.Error as error:
-            print("Failed to update record to database rollback: {}".format(error))
+            print(
+                "Failed to update record to database rollback: {}".format(
+                    error
+                    )
+                )
             # reverting changes because of exception
             self.db.rollback()
 
@@ -49,6 +53,43 @@ class DB(object):
         cursor.execute(sql)
         result = cursor.fetchall()
         return result
+
+    def insertSongs(self, songdata):
+        self.deleteSongs()
+        sql = """INSERT INTO songs
+        (artist,album,track,spotify_track_id,danceability,energy,majority_key,loudness,
+        mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,
+        duration,lyrics,popularity,explicit)
+        VALUES (
+            %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s
+        )
+        """
+        try:
+            cursor = self.db.cursor()
+            cursor.executemany(sql, songdata)
+            self.db.commit()
+            print(cursor.rowcount, "rows were inserted")
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            # reverting changes because of exception
+            self.db.rollback()
+
+    def deleteSongs(self):
+        sql = "DELETE FROM songs"
+        cursor = self.db.cursor()
+        try:
+            cursor.execute(sql)
+            self._resetAutoIncrement("songs")
+            self.db.commit()
+        except mysql.connector.Error as error:
+            print(
+                "Failed to update record to database rollback: {}".format(
+                    error
+                    )
+                )
+            # reverting changes because of exception
+            self.db.rollback()
 
     def _initializeTables(self):
         sql_recent = """
@@ -105,4 +146,3 @@ class DB(object):
         cursor = self.db.cursor()
         cursor.execute(sql)
         self.db.commit()
-

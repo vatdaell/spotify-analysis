@@ -6,7 +6,8 @@ from os import getenv
 from io import StringIO
 import pandas as pd
 
-PREFIX = "weekly_reports"
+PREFIX = "songs"
+
 
 def main():
     load_dotenv(find_dotenv())
@@ -25,7 +26,7 @@ def main():
         )
 
     latest_date = max(
-        list(map(lambda x: extractDate(x, PREFIX, ".csv"), file_names))
+            list(map(lambda x: extractDate(x, PREFIX, ".csv"), file_names))
         )
     latest_file = "{}/{}.{}".format(PREFIX, latest_date, "csv")
 
@@ -33,15 +34,17 @@ def main():
     body = store.getFile(latest_file)
     csv = pd.read_csv(StringIO(body), low_memory=False)
     csv = csv[
-        [
-            'artist', 'album', 'track', 'duration', 'popularity',
-            'played_at', 'explicit'
+            [
+                "artist", "album", "track", "track_id", "danceability",
+                "energy", "key", "loudness", "mode", "speechiness",
+                "acousticness", "instrumentalness", "liveness", "valence",
+                "tempo", "duration_ms", "lyrics", "popularity", "explicit"
+            ]
         ]
-    ]
     csv_tuple = [tuple(x) for x in csv.to_numpy()]
 
     # Load data to sql
-    db.insertRecentPlays(csv_tuple)
+    db.insertSongs(csv_tuple)
 
 
 if __name__ == "__main__":
