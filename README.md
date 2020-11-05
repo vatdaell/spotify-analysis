@@ -45,9 +45,10 @@ MYSQL_DB=dbname
 
 ## Usage
 
-To load songs listened to to s3 bucket and load songs data to mysql db
+To load songs listened to to s3 bucket and load songs data to mysql database along with loading recently played data to mysql database
 ```bash
 python src/etl/songs_pipeline.py
+python src/etl/recently_played_pipeline.py
 ```
 
 ## Roadmap

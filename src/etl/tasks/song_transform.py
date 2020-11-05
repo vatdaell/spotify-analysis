@@ -48,19 +48,10 @@ def main():
     load_dotenv(find_dotenv())
 
     store = Store(getenv("S3_BUCKET"))
-
-    songs_data = []
-    songs_files = store.getFiles(FEATURE_PREFIX)
-    songs_fileNames = list(map(lambda x: x.key, songs_files))
-
-    # Load up all the features data
-    for name in songs_fileNames:
-        body = store.getFile(name)
-        csv = pd.read_csv(StringIO(body), low_memory=False)
-        songs_data.append(csv)
-
-    csv_features = pd.concat(songs_data)
+    
+    csv_features = getLatestCSVFile(store, FEATURE_PREFIX)
     csv_features = csv_features.loc[:, csv_features.columns != "Unnamed: 0"]
+    csv_features = csv_features.drop_duplicates(subset=["track_id"])
 
     csv_lyrics = getLatestCSVFile(store, LYRICS_PREFIX)[["track_id", "lyrics"]]
     csv_lyrics = csv_lyrics.drop_duplicates(subset=["track_id"])
@@ -72,6 +63,7 @@ def main():
             "explicit"
         ]
     ]
+
     csv_recently = csv_recently.drop_duplicates(subset=["track_id"])
 
     joined_data = csv_features.join(

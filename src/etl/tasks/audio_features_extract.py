@@ -48,13 +48,12 @@ def main():
 
     # Make a payload of 100 since api has max 100
     id_chunks = list(chunks(list_of_ids, 100))
-
     # Get the features
     features = []
     for chunk in id_chunks:
         resp = sp.audio_features(chunk)
         features = features + resp
-
+    
     # Store json as raw format in s3
     body = store.encodeJson(features)
     store.saveFile(datetime.now(), RAW_PREFIX, body, "", RAW_EXTENSION)
