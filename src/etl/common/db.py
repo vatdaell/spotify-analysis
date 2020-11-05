@@ -18,8 +18,8 @@ class DB(object):
     def insertRecentPlays(self, songdata):
         self.deleteRecentPlays()
         sql = """INSERT INTO recently_played
-        (artist, album, track, duration, popularity, played_at, explicit)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        (spotify_track_id, played_at)
+        VALUES (%s, %s)
         """
         try:
             cursor = self.db.cursor()
@@ -95,14 +95,9 @@ class DB(object):
         sql_recent = """
                 CREATE TABLE IF NOT EXISTS recently_played (
                     id INT NOT NULL AUTO_INCREMENT,
-                    artist VARCHAR(128) NOT NULL,
-                    album VARCHAR(128) NOT NULL,
-                    track VARCHAR(128) NOT NULL,
-                    duration INT NOT NULL,
-                    popularity INT NOT NULL,
+                    spotify_track_id VARCHAR(128),
                     played_at TIMESTAMP NOT NULL,
-                    explicit BOOLEAN NOT NULL,
-                    PRIMARY KEY(id)
+                    PRIMARY KEY (id)
                 );
                 """
         sql_song = """
@@ -127,13 +122,14 @@ class DB(object):
                     liveness FLOAT NOT NULL,
                     valence FLOAT NOT NULL,
                     tempo FLOAT NOT NULL,
-                    PRIMARY KEY(id)
+                    PRIMARY KEY(id),
+                    UNIQUE(spotify_track_id)
                 );
             """
         try:
             cursor = self.db.cursor()
-            cursor.execute(sql_recent)
             cursor.execute(sql_song)
+            cursor.execute(sql_recent)
             self.db.commit()
 
         except mysql.connector.Error as error:

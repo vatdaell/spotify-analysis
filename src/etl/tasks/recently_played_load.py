@@ -32,12 +32,8 @@ def main():
     # Get File
     body = store.getFile(latest_file)
     csv = pd.read_csv(StringIO(body), low_memory=False)
-    csv = csv[
-        [
-            'artist', 'album', 'track', 'duration', 'popularity',
-            'played_at', 'explicit'
-        ]
-    ]
+
+    csv = csv[["track_id", "played_at"]]
     csv_tuple = [tuple(x) for x in csv.to_numpy()]
 
     # Load data to sql
