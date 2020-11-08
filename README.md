@@ -20,7 +20,7 @@ git clone https://github.com/vatdaell/spotify-analysis.git
 ```
 2) Install all the python packages
 ```bash
-pip install -r src/ETL/requirements.txt
+pip install -r src/ETL/requirements.txt -r src/ReportGenerator/requirements.txt
 ```
 3) Set up an [AWS account](https://aws.amazon.com/) with an s3 bucket.
 4) Create a [Spotify developer](https://developer.spotify.com/dashboard/login) account and create an application
