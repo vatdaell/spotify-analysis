@@ -19,6 +19,8 @@ def get_artist_song(genius, row):
     artist = row["artist"]
     track = row["track"]
     song = genius.search_song(track, artist)
+    if song is None:
+        return song
     result = clean_lyrics(song.lyrics)
     return result
 
