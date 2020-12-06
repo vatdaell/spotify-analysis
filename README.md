@@ -61,4 +61,4 @@ Some interesting features I want to implement/analyze in the future
 * Analysis of genre of music listened to
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/vatdaell/spotify-analysis/blob/master/LICENSE)
